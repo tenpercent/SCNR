@@ -1,6 +1,7 @@
 package com.scnr
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -23,5 +24,13 @@ class MainActivity : FragmentActivity() {
                 else -> QAFragment()
             }
         }
+
+        val client = MLClient(this)
+        Log.d(TAG, client.interpreter.inputTensorCount.toString())
+
+    }
+
+    companion object {
+        val TAG = "scnr.MainActivity"
     }
 }
