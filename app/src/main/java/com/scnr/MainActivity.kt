@@ -11,13 +11,16 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+    }
 
+    override fun onResume() {
+        super.onResume()
         findViewById<ViewPager2>(R.id.pager).adapter = object: FragmentStateAdapter(this) {
-            override fun getItemCount() = 1
+            override fun getItemCount() = 2
 
             override fun createFragment(position: Int): Fragment = when (position) {
                 0 -> CameraXFragment()
-                else -> CameraXFragment()
+                else -> QAFragment()
             }
         }
     }
