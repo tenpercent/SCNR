@@ -30,6 +30,23 @@ android {
     }
 }
 
+apply plugin: 'de.undercouch.download'
+
+task downloadLiteModel {
+    def downloadFiles = [
+            'https://storage.googleapis.com/download.tensorflow.org/models/tflite/bert_qa/vocab.txt': 'vocab.txt',
+            'https://storage.googleapis.com/download.tensorflow.org/models/tflite/bert_qa/contents_from_squad.json': 'qa.json',
+            'https://storage.googleapis.com/download.tensorflow.org/models/tflite/bert_qa/mobilebert_float_20191023.tflite': 'model.tflite',
+    ]
+    downloadFiles.each { key, value ->
+        download {
+            src key
+            dest "$projectDir/src/main/assets/" + value
+            overwrite false
+        }
+    }
+}
+
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     api 'androidx.core:core-ktx:1.2.0'
@@ -50,4 +67,8 @@ dependencies {
     api "androidx.camera:camera-camera2:1.0.0-beta02"
     api 'androidx.camera:camera-view:1.0.0-alpha09'
     api "androidx.camera:camera-lifecycle:1.0.0-beta02"
+
+    api 'org.tensorflow:tensorflow-lite:2.1.0'
 }
+
+
