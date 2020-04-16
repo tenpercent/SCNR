@@ -25,9 +25,10 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        val client = MLClient(this)
+        val client = MLClient(this, false)
         Log.d(TAG, client.interpreter.inputTensorCount.toString())
-
+        Log.d(TAG, client.dict.toString())
+        client.sampleRun()
     }
 
     companion object {

@@ -73,6 +73,7 @@ dependencies {
     api "androidx.camera:camera-lifecycle:1.0.0-beta02"
 
     api 'org.tensorflow:tensorflow-lite:2.1.0'
+//    api 'org.tensorflow:tensorflow-lite-gpu:2.1.0'
 }
 
 
