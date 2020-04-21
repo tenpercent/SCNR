@@ -47,7 +47,7 @@ class CameraXFragment : BaseFragment() {
                     .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                     .build()
             imageAnalysis = ImageAnalysis.Builder()
-                .setTargetResolution(Size(1280, 720))
+                .setTargetResolution(Size(WIDTH, HEIGHT))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
             imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
