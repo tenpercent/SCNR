@@ -59,7 +59,6 @@ class CameraXFragment : BaseFragment() {
                     Log.d(TAG, "image analysis rotation degrees: $rotationDegrees")
                     Log.d(TAG, "image analysis timestamp: $timestamp")
                     Log.d(TAG, "data size: ${imageBuffer.array().size}")
-
                 }
             })
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
@@ -71,8 +70,8 @@ class CameraXFragment : BaseFragment() {
     companion object {
         val TAG = "CameraXFragment"
 
-        val WIDTH = 1280
-        val HEIGHT = 720
+        val WIDTH = 720
+        val HEIGHT = 1280
 
         private fun imageToByteBuffer(image: ImageProxy, outputBuffer: ByteArray) {
             assert(image.format == ImageFormat.YUV_420_888)
