@@ -1,7 +1,9 @@
 package com.scnr
 
+import android.content.Context
 import android.graphics.ImageFormat
 import android.graphics.Rect
+import android.hardware.display.DisplayManager
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -25,18 +27,51 @@ class CameraXFragment : BaseFragment() {
     lateinit var cameraSelector: CameraSelector
     lateinit var cameraSurfaceProvider: Preview.SurfaceProvider
     lateinit var imageAnalysis: ImageAnalysis
-    lateinit var cameraExecutor: Executor
-    val imageBuffer: ByteBuffer = ByteBuffer.allocateDirect(WIDTH * HEIGHT * ImageFormat.getBitsPerPixel(ImageFormat.YUV_420_888) / 8)
+//    lateinit var cameraExecutor: Executor
+    private var displayId: Int = -1
+//    private val imageBuffer: ByteBuffer = ByteBuffer.allocateDirect((WIDTH * HEIGHT * ImageFormat.getBitsPerPixel(ImageFormat.YUV_420_888)) / 8)
+    // TODO: detect rotation properly
+    private val imageBuffer:ByteBuffer = ByteBuffer.allocateDirect(1080 * 1080 * ImageFormat.getBitsPerPixel(ImageFormat.YUV_420_888) / 8)
+    private val displayManager by lazy {
+        requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    }
 
+    /**
+     * We need a display listener for orientation changes that do not trigger a configuration
+     * change, for example if we choose to override config change in manifest or for 180-degree
+     * orientation changes.
+     */
+    private val displayListener = object : DisplayManager.DisplayListener {
+        override fun onDisplayAdded(displayId: Int) = Unit
+        override fun onDisplayRemoved(displayId: Int) = Unit
+        override fun onDisplayChanged(displayId: Int) = view?.let { view ->
+            if (displayId == this@CameraXFragment.displayId) {
+                Log.d(TAG, "Rotation changed: ${view.display.rotation}")
+                imageAnalysis.targetRotation = view.display.rotation
+
+            }
+        } ?: Unit
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cameraExecutor = Executors.newSingleThreadExecutor()
+//        cameraExecutor = Executors.newSingleThreadExecutor()
+        displayManager.registerDisplayListener(displayListener, null)
+
         cameraPreviewView = view.findViewById<PreviewView>(R.id.view_finder).also {
-            it.post { bindCameraView() }
+            it.post {
+                displayId = it.display.displayId
+                bindCameraView()
+            }
         }
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        displayManager.unregisterDisplayListener(displayListener)
+    }
 
+    // 2764807
+    // 1382407
     private fun bindCameraView() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(Runnable {
@@ -50,15 +85,21 @@ class CameraXFragment : BaseFragment() {
                 .setTargetResolution(Size(WIDTH, HEIGHT))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
+            val cameraExecutor = ContextCompat.getMainExecutor(requireContext())
             imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
+                Log.d(TAG, "image analyser rect: ${image.cropRect}")
                 image.use { ip: ImageProxy ->
                     val rotationDegrees = ip.imageInfo.rotationDegrees
                     val timestamp = ip.imageInfo.timestamp
                     imageBuffer.rewind()
-                    imageToByteBuffer(ip, imageBuffer.array())
+                    try {
+                        val byteswritten = imageToByteBuffer(ip, imageBuffer.array())
+                        Log.d(TAG, "data size: ${byteswritten}")
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        Log.d(TAG, "Index out of bounds")
+                    }
                     Log.d(TAG, "image analysis rotation degrees: $rotationDegrees")
                     Log.d(TAG, "image analysis timestamp: $timestamp")
-                    Log.d(TAG, "data size: ${imageBuffer.array().size}")
                 }
             })
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
@@ -73,12 +114,15 @@ class CameraXFragment : BaseFragment() {
         val WIDTH = 720
         val HEIGHT = 1280
 
-        private fun imageToByteBuffer(image: ImageProxy, outputBuffer: ByteArray) {
+        private fun imageToByteBuffer(image: ImageProxy, outputBuffer: ByteArray): Int {
             assert(image.format == ImageFormat.YUV_420_888)
 
             val imageCrop = image.cropRect
             val imagePlanes = image.planes
             val pixelCount = image.cropRect.width() * image.cropRect.height()
+            Log.d(TAG, "pixel count: [${image.cropRect.width()} x ${image.cropRect.height()} = $pixelCount")
+
+            var retval: Int = 0
 
             imagePlanes.forEachIndexed { planeIndex, plane ->
                 // How many values are read in input for each output value written
@@ -186,7 +230,11 @@ class CameraXFragment : BaseFragment() {
                         }
                     }
                 }
+                if (planeIndex == 2) {
+                    retval = outputOffset
+                }
             }
+            return retval
         }
     }
 }
