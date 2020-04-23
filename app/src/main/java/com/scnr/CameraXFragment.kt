@@ -2,9 +2,7 @@ package com.scnr
 
 import android.content.Context
 import android.graphics.ImageFormat
-import android.graphics.Rect
 import android.hardware.display.DisplayManager
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
@@ -14,8 +12,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import java.nio.ByteBuffer
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 class CameraXFragment : BaseFragment() {
     override val layoutRID: Int
@@ -47,7 +43,6 @@ class CameraXFragment : BaseFragment() {
             if (displayId == this@CameraXFragment.displayId) {
                 Log.d(TAG, "Rotation changed: ${view.display.rotation}")
                 imageAnalysis.targetRotation = view.display.rotation
-
             }
         } ?: Unit
     }
@@ -88,12 +83,12 @@ class CameraXFragment : BaseFragment() {
                 image.use { ip: ImageProxy ->
                     val startTime = System.currentTimeMillis()
                     try {
-                        val byteswritten = ImageUtils.imageToByteBuffer(ip, imageBuffer)
-                        Log.d(TAG, "data size: ${byteswritten}")
+                        // copy greyscale image as bytes
+                        ip.planes[0].buffer.get(imageBuffer.array(), 0, ip.width * ip.height)
+                        Log.d(TAG, "data size: ${ip.width * ip.height}")
                     } catch (e: ArrayIndexOutOfBoundsException) {
                     }
-                    val elapsed = System.currentTimeMillis() - startTime
-                    Log.d(TAG, "milliseconds per frame: ${elapsed}")
+                    Log.d(TAG, "milliseconds per frame: ${System.currentTimeMillis() - startTime}")
                 }
             })
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
@@ -102,6 +97,7 @@ class CameraXFragment : BaseFragment() {
 
         }, ContextCompat.getMainExecutor(requireContext()))
     }
+
     companion object {
         val TAG = "CameraXFragment"
 
