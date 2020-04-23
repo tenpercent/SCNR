@@ -24,9 +24,8 @@ class CameraXFragment : BaseFragment() {
     lateinit var cameraSurfaceProvider: Preview.SurfaceProvider
     lateinit var imageAnalysis: ImageAnalysis
     private var displayId: Int = -1
-//    private val imageBuffer: ByteBuffer = ByteBuffer.allocateDirect((WIDTH * HEIGHT * ImageFormat.getBitsPerPixel(ImageFormat.YUV_420_888)) / 8)
     // TODO: detect rotation properly
-    private val imageBuffer:ByteBuffer = ByteBuffer.allocateDirect(1080 * 1080 * ImageFormat.getBitsPerPixel(ImageFormat.YUV_420_888) / 8)
+    private val imageBuffer:ByteBuffer = ByteBuffer.allocateDirect(1080 * 1080 / 8)
     private val displayManager by lazy {
         requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     }
