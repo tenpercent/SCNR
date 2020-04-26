@@ -78,6 +78,8 @@ class CameraXFragment : BaseFragment() {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
             val mTess = TessBaseAPI()
+            mTess.init("${requireContext().cacheDir}", "eng")
+            Log.d(TAG, "tessdata init: ${mTess.initLanguagesAsString}")
             val cameraExecutor = ContextCompat.getMainExecutor(requireContext())
             imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
                 Log.d(TAG, "image analyser rect: ${image.cropRect}")
@@ -87,6 +89,8 @@ class CameraXFragment : BaseFragment() {
                         // copy greyscale image as bytes
                         ip.planes[0].buffer.get(imageBuffer.array(), 0, ip.width * ip.height)
                         mTess.setImage(imageBuffer.array(), ip.width, ip.height, 1, ip.width)
+                        mTess.setDebug(true)
+
                         Log.d(TAG, "tesseract recognized: ${mTess.utF8Text}")
                     } catch (e: ArrayIndexOutOfBoundsException) {
                     }
