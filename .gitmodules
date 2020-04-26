@@ -4,3 +4,6 @@
 [submodule "app/tesseract"]
 	path = app/tesseract
 	url = https://github.com/tesseract-ocr/tesseract
+[submodule "app/leptonica"]
+	path = app/leptonica
+	url = https://github.com/DanBloomberg/leptonica
