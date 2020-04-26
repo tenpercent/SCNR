@@ -30,7 +30,7 @@ android {
     }
 
     aaptOptions {
-        noCompress "tflite", "json", "txt"
+        noCompress "tflite", "json", "txt", "traineddata"
     }
 
 //    externalNativeBuild {

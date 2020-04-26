@@ -11,6 +11,7 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import com.googlecode.tesseract.android.TessBaseAPI
 import java.nio.ByteBuffer
 
 class CameraXFragment : BaseFragment() {
@@ -76,6 +77,7 @@ class CameraXFragment : BaseFragment() {
                 .setTargetResolution(Size(WIDTH, HEIGHT))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
+            val mTess = TessBaseAPI()
             val cameraExecutor = ContextCompat.getMainExecutor(requireContext())
             imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
                 Log.d(TAG, "image analyser rect: ${image.cropRect}")
@@ -84,7 +86,8 @@ class CameraXFragment : BaseFragment() {
                     try {
                         // copy greyscale image as bytes
                         ip.planes[0].buffer.get(imageBuffer.array(), 0, ip.width * ip.height)
-                        Log.d(TAG, "data size: ${ip.width * ip.height}")
+                        mTess.setImage(imageBuffer.array(), ip.width, ip.height, 1, ip.width)
+                        Log.d(TAG, "tesseract recognized: ${mTess.utF8Text}")
                     } catch (e: ArrayIndexOutOfBoundsException) {
                     }
                     Log.d(TAG, "milliseconds per frame: ${System.currentTimeMillis() - startTime}")
