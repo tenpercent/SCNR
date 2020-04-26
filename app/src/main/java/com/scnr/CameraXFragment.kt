@@ -15,6 +15,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import com.googlecode.tesseract.android.TessBaseAPI
+import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT
+import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT_OSD
 import java.nio.ByteBuffer
 
 class CameraXFragment : BaseFragment() {
@@ -80,9 +82,10 @@ class CameraXFragment : BaseFragment() {
                 .setTargetResolution(Size(WIDTH, HEIGHT))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
-            val mTess = TessBaseAPI()
-            mTess.init("${requireContext().cacheDir}", "eng")
-            Log.d(TAG, "tessdata init: ${mTess.initLanguagesAsString}")
+            val mTess = TessBaseAPI().apply {
+                init("${requireContext().cacheDir}", "eng")
+                pageSegMode = PSM_SPARSE_TEXT_OSD
+            }
             val cameraExecutor = ContextCompat.getMainExecutor(requireContext())
             imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
                 Log.d(TAG, "image analyser rect: ${image.cropRect}")
@@ -91,6 +94,7 @@ class CameraXFragment : BaseFragment() {
                     try {
                         // copy greyscale image as bytes
                         ip.planes[0].buffer.get(imageBuffer.array(), 0, ip.width * ip.height)
+
                         mTess.setImage(imageBuffer.array(), ip.width, ip.height, 1, ip.width)
                         val textFromImage = mTess.utF8Text
 
