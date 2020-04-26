@@ -81,7 +81,7 @@ dependencies {
     api 'org.tensorflow:tensorflow-lite:2.1.0'
 //    api 'org.tensorflow:tensorflow-lite-gpu:2.1.0'
 
-    api 'com.rmtheis:tess-two:9.0.0'
+    api 'com.rmtheis:tess-two:9.1.0'
 }
 
 
