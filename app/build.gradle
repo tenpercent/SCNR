@@ -32,6 +32,12 @@ android {
     aaptOptions {
         noCompress "tflite", "json", "txt"
     }
+
+    externalNativeBuild {
+        cmake {
+            path "tesseract/CMakeLists.txt"
+        }
+    }
 }
 
 apply plugin: 'de.undercouch.download'
