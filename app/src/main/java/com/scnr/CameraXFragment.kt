@@ -1,5 +1,6 @@
 package com.scnr
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.ImageFormat
 import android.hardware.display.DisplayManager
@@ -7,6 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Size
 import android.view.View
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -89,9 +92,11 @@ class CameraXFragment : BaseFragment() {
                         // copy greyscale image as bytes
                         ip.planes[0].buffer.get(imageBuffer.array(), 0, ip.width * ip.height)
                         mTess.setImage(imageBuffer.array(), ip.width, ip.height, 1, ip.width)
-                        mTess.setDebug(true)
+                        val textFromImage = mTess.utF8Text
 
-                        Log.d(TAG, "tesseract recognized: ${mTess.utF8Text}")
+                        Log.d(TAG, "tesseract recognized: ${textFromImage}")
+                        Toast.makeText(requireContext(), textFromImage, LENGTH_SHORT).show()
+                        mTess.clear()
                     } catch (e: ArrayIndexOutOfBoundsException) {
                     }
                     Log.d(TAG, "milliseconds per frame: ${System.currentTimeMillis() - startTime}")

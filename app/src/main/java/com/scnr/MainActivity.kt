@@ -1,5 +1,6 @@
 package com.scnr
 
+import android.content.res.AssetManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,21 +16,7 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
-        File("${cacheDir}/tessdata").apply {
-            if (!exists()) mkdir()
-        }
-
-        listOf("eng", "osd").map { "tessdata/$it.traineddata" }.forEach {fname ->
-            assets.openFd(fname).use {
-                it.createInputStream().channel.transferTo(
-                    it.startOffset,
-                    it.length,
-                    FileOutputStream("${cacheDir}/$fname").channel)
-            }
-        }
-
-
-
+        cacheTessData(assets, cacheDir)
     }
 
     override fun onResume() {
@@ -51,6 +38,19 @@ class MainActivity : FragmentActivity() {
 
     companion object {
         val TAG = "scnr.MainActivity"
+        fun cacheTessData(assets: AssetManager, cacheDir: File) {
+            File("${cacheDir}/tessdata").apply {
+                if (!exists()) mkdir()
+            }
 
+            listOf("eng", "osd").map { "tessdata/$it.traineddata" }.forEach {fname ->
+                assets.openFd(fname).use {
+                    it.createInputStream().channel.transferTo(
+                        it.startOffset,
+                        it.length,
+                        FileOutputStream("${cacheDir}/$fname").channel)
+                }
+            }
+        }
     }
 }
