@@ -33,11 +33,11 @@ android {
         noCompress "tflite", "json", "txt"
     }
 
-    externalNativeBuild {
-        cmake {
-            path "tesseract/CMakeLists.txt"
-        }
-    }
+//    externalNativeBuild {
+//        cmake {
+//            path "tesseract/CMakeLists.txt"
+//        }
+//    }
 }
 
 apply plugin: 'de.undercouch.download'
@@ -73,13 +73,15 @@ dependencies {
 
     api "androidx.viewpager2:viewpager2:1.0.0"
 
-    api "androidx.camera:camera-core:1.0.0-beta02"
-    api "androidx.camera:camera-camera2:1.0.0-beta02"
-    api 'androidx.camera:camera-view:1.0.0-alpha09'
-    api "androidx.camera:camera-lifecycle:1.0.0-beta02"
+    api "androidx.camera:camera-core:1.0.0-beta03"
+    api "androidx.camera:camera-camera2:1.0.0-beta03"
+    api 'androidx.camera:camera-view:1.0.0-alpha10'
+    api "androidx.camera:camera-lifecycle:1.0.0-beta03"
 
     api 'org.tensorflow:tensorflow-lite:2.1.0'
 //    api 'org.tensorflow:tensorflow-lite-gpu:2.1.0'
+
+    api 'com.rmtheis:tess-two:9.0.0'
 }
 
 
