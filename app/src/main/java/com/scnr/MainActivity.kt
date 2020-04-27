@@ -20,8 +20,6 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
-        cacheTessData(assets, cacheDir)
     }
 
     override fun onResume() {
@@ -35,27 +33,13 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        val client = MLClient(this, false)
-        Log.d(TAG, client.interpreter.inputTensorCount.toString())
-        Log.d(TAG, client.dict.toString())
-        client.sampleRun()
+//        val client = MLClient(this, false)
+//        Log.d(TAG, client.interpreter.inputTensorCount.toString())
+//        Log.d(TAG, client.dict.toString())
+//        client.sampleRun()
     }
 
     companion object {
         val TAG = "scnr.MainActivity"
-        fun cacheTessData(assets: AssetManager, cacheDir: File) {
-            File("${cacheDir}/tessdata").apply {
-                if (!exists()) mkdir()
-            }
-
-            listOf("eng", "osd").map { "tessdata/$it.traineddata" }.forEach {fname ->
-                assets.openFd(fname).use {
-                    it.createInputStream().channel.transferTo(
-                        it.startOffset,
-                        it.length,
-                        FileOutputStream("${cacheDir}/$fname").channel)
-                }
-            }
-        }
     }
 }

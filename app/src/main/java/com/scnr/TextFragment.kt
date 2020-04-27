@@ -14,6 +14,10 @@ class TextFragment(val vm: OCRViewModel): BaseFragment() {
             view.findViewById<TextView>(R.id.the_answer).text = s
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
 //
 //    override fun onResume() {
 //        super.onResume()
