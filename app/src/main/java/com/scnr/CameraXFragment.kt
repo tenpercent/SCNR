@@ -55,20 +55,28 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        displayManager.registerDisplayListener(displayListener, null)
-
         cameraPreviewView = view.findViewById<PreviewView>(R.id.view_finder).also {
             it.post {
                 displayId = it.display.displayId
-                bindCameraView()
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onResume() {
+        super.onResume()
+        displayManager.registerDisplayListener(displayListener, null)
+        bindCameraView()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        cameraProvider.unbindAll()
         displayManager.unregisterDisplayListener(displayListener)
         imageAnalysis.clearAnalyzer()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 
     private fun bindCameraView() {
@@ -84,10 +92,6 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
                 .setTargetResolution(Size(WIDTH, HEIGHT))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
-            val mTess = TessBaseAPI().apply {
-                init("${requireContext().cacheDir}", "eng")
-                pageSegMode = PSM_SPARSE_TEXT_OSD
-            }
             val cameraExecutor = ContextCompat.getMainExecutor(requireContext())
             imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
                 Log.d(TAG, "image analyser rect: ${image.cropRect}")
@@ -97,14 +101,9 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
                         // copy greyscale image as bytes
                         ip.planes[0].buffer.get(imageBuffer.array(), 0, ip.width * ip.height)
 
-                        mTess.setImage(imageBuffer.array(), ip.width, ip.height, 1, ip.width)
-                        // very long call
-                        val textFromImage = mTess.utF8Text
+                        val textFromImage = vm.analyze(imageBuffer.array(), ip.width, ip.height)
 
-                        vm.text.postValue(textFromImage)
                         Log.d(TAG, "tesseract recognized: ${textFromImage}")
-                        Toast.makeText(requireContext(), textFromImage, LENGTH_SHORT).show()
-                        mTess.clear()
                     } catch (e: ArrayIndexOutOfBoundsException) {
                     }
                     Log.d(TAG, "milliseconds per frame: ${System.currentTimeMillis() - startTime}")
