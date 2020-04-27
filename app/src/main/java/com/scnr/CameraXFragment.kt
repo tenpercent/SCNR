@@ -93,8 +93,7 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
                 .setTargetResolution(Size(WIDTH, HEIGHT))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
-            val cameraExecutor = Executors.newSingleThreadExecutor()
-            imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
+            imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), ImageAnalysis.Analyzer { image ->
                 Log.d(TAG, "image analyser rect: ${image.cropRect}")
                 image.use { ip: ImageProxy ->
                     val startTime = System.currentTimeMillis()
