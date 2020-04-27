@@ -19,7 +19,7 @@ import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT
 import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT_OSD
 import java.nio.ByteBuffer
 
-class CameraXFragment : BaseFragment() {
+class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
     override val layoutRID: Int
         get() = R.layout.retrieval_screen
 
@@ -98,6 +98,7 @@ class CameraXFragment : BaseFragment() {
                         mTess.setImage(imageBuffer.array(), ip.width, ip.height, 1, ip.width)
                         val textFromImage = mTess.utF8Text
 
+                        vm.text.postValue(textFromImage)
                         Log.d(TAG, "tesseract recognized: ${textFromImage}")
                         Toast.makeText(requireContext(), textFromImage, LENGTH_SHORT).show()
                         mTess.clear()
