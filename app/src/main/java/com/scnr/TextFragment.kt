@@ -1,10 +1,8 @@
 package com.scnr
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 
 class TextFragment(val vm: OCRViewModel): BaseFragment() {
     override val layoutRID: Int
