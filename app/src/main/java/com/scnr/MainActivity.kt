@@ -1,15 +1,11 @@
 package com.scnr
 
-import android.content.res.AssetManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import java.io.File
-import java.io.FileOutputStream
 
 class MainActivity : FragmentActivity() {
 
@@ -32,11 +28,6 @@ class MainActivity : FragmentActivity() {
                 else -> TextFragment(vm)
             }
         }
-
-//        val client = MLClient(this, false)
-//        Log.d(TAG, client.interpreter.inputTensorCount.toString())
-//        Log.d(TAG, client.dict.toString())
-//        client.sampleRun()
     }
 
     companion object {
