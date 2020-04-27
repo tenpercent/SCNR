@@ -18,6 +18,7 @@ import com.googlecode.tesseract.android.TessBaseAPI
 import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT
 import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT_OSD
 import java.nio.ByteBuffer
+import java.util.concurrent.Executors
 
 class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
     override val layoutRID: Int
@@ -92,7 +93,7 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
                 .setTargetResolution(Size(WIDTH, HEIGHT))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
-            val cameraExecutor = ContextCompat.getMainExecutor(requireContext())
+            val cameraExecutor = Executors.newSingleThreadExecutor()
             imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
                 Log.d(TAG, "image analyser rect: ${image.cropRect}")
                 image.use { ip: ImageProxy ->
