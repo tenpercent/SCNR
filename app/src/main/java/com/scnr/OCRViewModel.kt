@@ -31,10 +31,11 @@ class OCRViewModel(app: Application): AndroidViewModel(app) {
     companion object {
         val TAG = "scnr.OCRViewModel"
         fun cacheTessData(assets: AssetManager, cacheDir: File) {
+            // create cache directory if it doesn't exist
             File("${cacheDir}/tessdata").apply {
                 if (!exists()) mkdir()
             }
-
+            // copy trained data from assets to cache directory
             listOf("eng", "osd").map { "tessdata/$it.traineddata" }.forEach {fname ->
                 assets.openFd(fname).use {
                     it.createInputStream().channel.transferTo(
