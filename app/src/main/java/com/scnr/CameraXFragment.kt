@@ -28,6 +28,7 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
     lateinit var preview: Preview
     lateinit var cameraSelector: CameraSelector
     lateinit var cameraSurfaceProvider: Preview.SurfaceProvider
+    lateinit var cameraProvider: ProcessCameraProvider
     lateinit var imageAnalysis: ImageAnalysis
     private var displayId: Int = -1
     // TODO: detect rotation properly
@@ -67,12 +68,13 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         displayManager.unregisterDisplayListener(displayListener)
+        imageAnalysis.clearAnalyzer()
     }
 
     private fun bindCameraView() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(Runnable {
-            val cameraProvider = cameraProviderFuture.get()
+            cameraProvider = cameraProviderFuture.get()
             preview = Preview.Builder()
                     .build()
             cameraSelector = CameraSelector.Builder()
@@ -96,6 +98,7 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
                         ip.planes[0].buffer.get(imageBuffer.array(), 0, ip.width * ip.height)
 
                         mTess.setImage(imageBuffer.array(), ip.width, ip.height, 1, ip.width)
+                        // very long call
                         val textFromImage = mTess.utF8Text
 
                         vm.text.postValue(textFromImage)
