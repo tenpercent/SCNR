@@ -32,12 +32,6 @@ android {
     aaptOptions {
         noCompress "tflite", "json", "txt", "traineddata"
     }
-
-//    externalNativeBuild {
-//        cmake {
-//            path "tesseract/CMakeLists.txt"
-//        }
-//    }
 }
 
 dependencies {
