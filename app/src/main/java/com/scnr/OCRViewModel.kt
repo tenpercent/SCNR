@@ -13,8 +13,10 @@ class OCRViewModel(app: Application): AndroidViewModel(app) {
     fun registerTextObserver(f: (String) -> Unit) = text.observeForever(f)
 
     fun analyze(imageBytes: ByteArray, width: Int, height: Int): String {
-        mTess.setImage(imageBytes, width, height, 1, width)
-        return mTess.utF8Text.also { text.postValue(it); mTess.clear() }
+        synchronized(mTess) {
+            mTess.setImage(imageBytes, width, height, 1, width)
+            return mTess.utF8Text.also { text.postValue(it); mTess.clear() }
+        }
     }
 
     init {
