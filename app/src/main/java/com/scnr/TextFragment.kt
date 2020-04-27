@@ -18,12 +18,4 @@ class TextFragment(val vm: OCRViewModel): BaseFragment() {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//    }
 }
