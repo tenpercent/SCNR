@@ -1,8 +1,10 @@
-package com.scnr
+package com.scnr.ui
 
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import com.scnr.OCRViewModel
+import com.scnr.R
 
 class TextFragment(val vm: OCRViewModel): BaseFragment() {
     override val layoutRID: Int

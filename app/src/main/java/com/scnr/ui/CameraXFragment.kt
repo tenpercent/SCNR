@@ -1,22 +1,17 @@
-package com.scnr
+package com.scnr.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.ImageFormat
 import android.hardware.display.DisplayManager
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
 import android.view.View
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import com.googlecode.tesseract.android.TessBaseAPI
-import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT
-import com.googlecode.tesseract.android.TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT_OSD
+import com.scnr.OCRViewModel
+import com.scnr.R
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 
@@ -90,7 +85,10 @@ class CameraXFragment(val vm: OCRViewModel) : BaseFragment() {
                     .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                     .build()
             imageAnalysis = ImageAnalysis.Builder()
-                .setTargetResolution(Size(WIDTH, HEIGHT))
+                .setTargetResolution(Size(
+                    WIDTH,
+                    HEIGHT
+                ))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
             imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), ImageAnalysis.Analyzer { image ->

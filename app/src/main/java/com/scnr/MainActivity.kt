@@ -6,6 +6,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.scnr.ui.CameraXFragment
+import com.scnr.ui.TextFragment
 
 class MainActivity : FragmentActivity() {
 
